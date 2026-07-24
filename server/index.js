@@ -25,7 +25,11 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Multer upload setup for note files
-const upload = multer({ dest: path.join(__dirname, '../uploads/') });
+const uploadDir = path.join(__dirname, '../uploads/');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+const upload = multer({ dest: uploadDir });
 
 // File parse endpoint (for .txt and .pdf uploads)
 app.post('/api/parse-file', upload.single('file'), async (req, res) => {
@@ -75,8 +79,10 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', app: 'NoteMerge AI Notes Compiler', timestamp: new Date().toISOString() });
 });
 
-// Always serve static frontend assets from dist folder
-const distPath = path.join(__dirname, '../dist');
+// Serve static frontend assets from dist folder
+const distPath = path.resolve(__dirname, '../dist');
+console.log('📁 Serving static frontend from:', distPath);
+
 app.use(express.static(distPath));
 
 app.get('*', (req, res) => {
@@ -84,10 +90,10 @@ app.get('*', (req, res) => {
   if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath);
   } else {
-    res.status(404).send('NoteMerge Frontend building... Please refresh in 30 seconds.');
+    res.status(404).send('NoteMerge Frontend dist/index.html missing. Run npm run build.');
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 NoteMerge Server running on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 NoteMerge Server running on 0.0.0.0:${PORT}`);
 });
