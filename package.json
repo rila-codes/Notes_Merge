@@ -1,0 +1,34 @@
+{
+  "name": "notemerge",
+  "version": "1.0.0",
+  "description": "AI Notes Compiler Web App",
+  "main": "server/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "server": "nodemon server/index.js",
+    "build": "vite build",
+    "start": "node server/index.js",
+    "full-dev": "concurrently \"npm run server\" \"npm run dev\""
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.0",
+    "bcryptjs": "^3.0.3",
+    "canvas-confetti": "^1.9.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.475.0",
+    "multer": "^1.4.5-lts.1",
+    "pdf-parse": "^1.1.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.2",
+    "nodemon": "^3.1.9",
+    "vite": "^6.1.0"
+  }
+}
