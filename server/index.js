@@ -48,7 +48,9 @@ app.post('/api/parse-file', upload.single('file'), async (req, res) => {
     }
 
     // Clean up temporary file
-    fs.unlinkSync(filePath);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
 
     res.json({
       success: true,
@@ -73,15 +75,19 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', app: 'NoteMerge AI Notes Compiler', timestamp: new Date().toISOString() });
 });
 
-// Serve static frontend assets if built
+// Always serve static frontend assets from dist folder
 const distPath = path.join(__dirname, '../dist');
-if (fs.existsSync(distPath)) {
-  app.use(express.static(distPath));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(distPath, 'index.html'));
-  });
-}
+app.use(express.static(distPath));
+
+app.get('*', (req, res) => {
+  const indexPath = path.join(distPath, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).send('NoteMerge Frontend building... Please refresh in 30 seconds.');
+  }
+});
 
 app.listen(PORT, () => {
-  console.log(`🚀 NoteMerge Server running on http://localhost:${PORT}`);
+  console.log(`🚀 NoteMerge Server running on port ${PORT}`);
 });
